@@ -26,8 +26,8 @@ type MileageOption struct {
 }
 
 type Booking struct {
-	From time.Time `json:"from"`
-	To   time.Time `json:"to"`
+	From TimeFormatYYYYMMDD `json:"from"`
+	To   TimeFormatYYYYMMDD `json:"to"`
 }
 
 type Rental struct {

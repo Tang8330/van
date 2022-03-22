@@ -1,23 +1,59 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/tang8330/van/lib"
 	"log"
+	"os"
 	"time"
 )
 
-func main() {
-	// URL https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San Francisco, California, United States&bounds[ne]=37.933896600579175,-121.92748823529058&bounds[sw]=37.77581594083472,-122.55651176470212&currency=USD&date[from]=2022-03-22&date[to]=2022-03-31&filter[exclude_type]=utility-trailer,tow-vehicle,other&filter[keywords]=sprinter&filter[type]=camper-van&locale=en-us&page[limit]=24&page[offset]=0&suggested=true
-
-	list, err := lib.List(time.Now(), time.Now().Add(7*24*time.Hour))
+func checkError(err error, context string) {
 	if err != nil {
-		log.Fatalf("Something broke. Error: %v", err)
+		log.Fatalf(fmt.Sprintf("%s, err: %v", context, err))
 	}
+}
 
-	fmt.Println(fmt.Sprintf("There are %d number of rentals", len(list.Rentals)))
+func main() {
+	now := time.Now()
+	folderName := lib.ToYYYMMDD(now)
+
+	list, err := lib.List(now, now.Add(7*24*time.Hour))
+	checkError(err, "failed to list")
+
+	err = os.Mkdir(folderName, 0755)
+	checkError(err, "failed to make folder")
+
+	outFile, err := os.Create(fmt.Sprintf("%s/log.txt", folderName))
+	checkError(err, "failed to create out file")
+	defer outFile.Close()
+
+	csvFile, err := os.Create(fmt.Sprintf("%s/results.csv", folderName))
+	checkError(err, "failed to create csv file")
+	defer csvFile.Close()
+
+	csvWriter := csv.NewWriter(csvFile)
+	defer csvWriter.Flush()
+
+	outFile.WriteString(fmt.Sprintf("###### This is the %s run ###### \n", lib.ToYYYMMDD(now)))
+	outFile.WriteString(fmt.Sprintf("There are %d number of rentals \n", len(list.Rentals)))
+
+	csvWriter.Write([]string{
+		"id", "daily_rate_cents", "weekly_rate_cents", "monthly_rate_cents", "min_days",
+	})
 
 	for _, rental := range list.Rentals {
-		fmt.Println(lib.GetBookings(rental.ID, time.Now(), time.Now().Add(4*7*24*time.Hour)))
+		bookings, err := lib.GetBookings(rental.ID, now, lib.EndOfYear(now))
+		checkError(err, "failed to get bookings")
+		csvWriter.Write([]string{
+			fmt.Sprint(rental.ID),
+			fmt.Sprint(rental.DailyPriceCents),
+			fmt.Sprint(rental.WeeklyPriceCents),
+			fmt.Sprint(rental.MonthlyPriceCents),
+			fmt.Sprint(rental.MinDays),
+		})
+
+		fmt.Println("Bookings", len(bookings))
 	}
 }
