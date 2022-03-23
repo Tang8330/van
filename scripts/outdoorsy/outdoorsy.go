@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/tang8330/van/lib"
 	"log"
+	"math"
 	"os"
 	"time"
 )
@@ -42,14 +43,14 @@ func main() {
 	csvWriter.Write([]string{
 		"id", "date_on_outdoorsy", "make", "year", "daily_rate_cents", "weekly_rate_cents", "monthly_rate_cents", "min_days",
 		"security_deposit_cents", "num_miles_free_daily", "per_mile_cents", "location", "num_favorites",
-		"this_year_bookings", "this_year_revenue", "last_year_bookings", "last_year_revenue", "url",
+		"this_year_bookings", "this_year_revenue", "average_trip_revenue", "average_trip_duration_days", "last_year_bookings", "last_year_revenue", "url",
 	})
 
 	monthsToRentalCount := make(map[string]int)
 	lastYearMonthsToRentalCount := make(map[string]int)
 
 	for _, rental := range list.Rentals {
-		var lastYearRevenue, currentYearRevenue int
+		var lastYearRevenue, currentYearRevenue, bookingDurationDays int
 		thisYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(now), lib.EndOfYear(now))
 		checkError(err, "failed to get this year bookings")
 		lastYear := now.Add(-1 * 365 * 24 * time.Hour)
@@ -65,6 +66,7 @@ func main() {
 			}
 
 			monthsToRentalCount[month] = monthsToRentalCount[month] + 1
+			bookingDurationDays += booking.NumberOfNights()
 		}
 
 		for _, booking := range lastYearBookings {
@@ -99,6 +101,8 @@ func main() {
 			fmt.Sprint(rental.FavoriteCount),
 			fmt.Sprint(len(thisYearBookings)),
 			fmt.Sprint(currentYearRevenue / 100),
+			fmt.Sprint(float64(currentYearRevenue) / 100 / math.Max(1, float64(len(thisYearBookings)))),
+			fmt.Sprint(float64(bookingDurationDays) / math.Max(1, float64(len(thisYearBookings)))),
 			fmt.Sprint(len(lastYearBookings)),
 			fmt.Sprint(lastYearRevenue / 100),
 			rental.URL(),

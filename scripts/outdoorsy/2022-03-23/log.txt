@@ -1,5 +1,5 @@
-###### This is the 2022-03-22 run ###### 
-There are 12 number of rentals 
+###### This is the 2022-03-23 run ###### 
+There are 12 number of camper vans available for rental 
 This is the raw rental numbers for this region for this year and last year: 
 2022 - January, value: 4, 2021 - January, value: 3 
 2022 - February, value: 4, 2021 - February, value: 2 
