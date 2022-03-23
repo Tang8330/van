@@ -1,0 +1,15 @@
+###### This is the 2022-03-22 run ###### 
+There are 12 number of rentals 
+This is the raw rental numbers for this region for this year and last year: 
+2022 - January, value: 4, 2021 - January, value: 3 
+2022 - February, value: 4, 2021 - February, value: 2 
+2022 - March, value: 1, 2021 - March, value: 2 
+2022 - April, value: 5, 2021 - April, value: 2 
+2022 - May, value: 1, 2021 - May, value: 4 
+2022 - June, value: 3, 2021 - June, value: 10 
+2022 - July, value: 1, 2021 - July, value: 9 
+2022 - August, value: 3, 2021 - August, value: 4 
+2022 - September, value: 3, 2021 - September, value: 4 
+2022 - October, value: 0, 2021 - October, value: 4 
+2022 - November, value: 0, 2021 - November, value: 2 
+2022 - December, value: 0, 2021 - December, value: 1 

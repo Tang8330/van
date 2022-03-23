@@ -41,15 +41,16 @@ type ActiveOption struct {
 }
 
 type Rental struct {
-	ID            uint   `json:"id"`
-	Name          string `json:"filtered_name"`
-	Description   string `json:"filtered_description"`
-	FavoriteCount uint   `json:"favorite_count"`
+	ID            uint      `json:"id"`
+	Name          string    `json:"filtered_name"`
+	CreatedAt     time.Time `json:"created"`
+	Description   string    `json:"filtered_description"`
+	FavoriteCount uint      `json:"favorite_count"`
 
 	// Where's the car parked
 	Location Location `json:"location"`
 
-	VehicleMake string `string:"vehicle_make"`
+	VehicleMake string `json:"vehicle_make"`
 	VehicleYear uint   `json:"vehicle_year"`
 	MinDays     uint   `json:"minimum_days"`
 	// Don't use, use ActiveOption instead
@@ -59,7 +60,7 @@ type Rental struct {
 
 	SecurityDepositCents uint          `json:"security_deposit"`
 	MileageOption        MileageOption `json:"mileage_usage_item"`
-	ActiveOption         ActiveOption  `json:"active_option"`
+	ActiveOption         ActiveOption  `json:"active_options"`
 }
 
 func List(start, end time.Time) (*ListResponse, error) {
