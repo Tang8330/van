@@ -31,3 +31,7 @@ func (t *TimeFormatYYYYMMDD) UnmarshalJSON(b []byte) (err error) {
 	*t = TimeFormatYYYYMMDD(parsedTime)
 	return nil
 }
+
+func (t *TimeFormatYYYYMMDD) Time() time.Time {
+	return time.Time(*t)
+}

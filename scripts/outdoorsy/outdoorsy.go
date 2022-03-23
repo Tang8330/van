@@ -41,15 +41,25 @@ func main() {
 
 	csvWriter.Write([]string{
 		"id", "daily_rate_cents", "weekly_rate_cents", "monthly_rate_cents", "min_days",
-		"security_deposit_cents", "num_miles_free_daily", "per_mile_cents", "location",
-		"this_year_bookings", "last_year_bookings", "url",
+		"security_deposit_cents", "num_miles_free_daily", "per_mile_cents", "location", "num_favorites",
+		"this_year_bookings", "this_year_revenue", "last_year_bookings", "last_year_revenue", "url",
 	})
 
 	for _, rental := range list.Rentals {
+		var lastYearRevenue, currentYearRevenue int
 		thisYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(now), lib.EndOfYear(now))
+		checkError(err, "failed to get this year bookings")
 		lastYear := now.Add(-1 * 365 * 24 * time.Hour)
 		lastYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(lastYear), lib.EndOfYear(lastYear))
-		checkError(err, "failed to get bookings")
+		checkError(err, "failed to get last year bookings")
+
+		for _, booking := range thisYearBookings {
+			currentYearRevenue += booking.ApproximateRevenue(rental.ActiveOption.DailyPrice, rental.ActiveOption.WeekPrice, rental.ActiveOption.MonthPrice)
+		}
+
+		for _, booking := range lastYearBookings {
+			lastYearRevenue += booking.ApproximateRevenue(rental.ActiveOption.DailyPrice, rental.ActiveOption.WeekPrice, rental.ActiveOption.MonthPrice)
+		}
 
 		mileageOverageCents := "N/A"
 		if len(rental.MileageOption.Tiers) > 0 {
@@ -58,16 +68,19 @@ func main() {
 
 		csvWriter.Write([]string{
 			fmt.Sprint(rental.ID),
-			fmt.Sprint(rental.DailyPriceCents),
-			fmt.Sprint(rental.WeeklyPriceCents),
-			fmt.Sprint(rental.MonthlyPriceCents),
+			fmt.Sprint(rental.ActiveOption.DailyPrice),
+			fmt.Sprint(rental.ActiveOption.WeekPrice),
+			fmt.Sprint(rental.ActiveOption.MonthPrice),
 			fmt.Sprint(rental.MinDays),
 			fmt.Sprint(rental.SecurityDepositCents),
 			fmt.Sprint(rental.MileageOption.Free),
 			mileageOverageCents,
 			rental.Location.City,
+			fmt.Sprint(rental.FavoriteCount),
 			fmt.Sprint(len(thisYearBookings)),
+			fmt.Sprint(currentYearRevenue),
 			fmt.Sprint(len(lastYearBookings)),
+			fmt.Sprint(lastYearRevenue),
 			rental.URL(),
 		})
 	}

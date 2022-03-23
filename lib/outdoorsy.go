@@ -31,6 +31,15 @@ type Booking struct {
 	To   TimeFormatYYYYMMDD `json:"to"`
 }
 
+// This all came from
+// https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San%20Francisco%2C%20California%2C%20United%20States&bounds[ne]=37.933896600579175%2C-121.92748823529058&bounds[sw]=37.77581594083472%2C-122.55651176470212&currency=USD&date[from]=2022-03-22&date[to]=2022-03-31&filter[exclude_type]=utility-trailer%2Ctow-vehicle%2Cother&filter[keywords]=sprinter&filter[type]=camper-van&locale=en-us&page[limit]=24&page[offset]=0&suggested=true
+
+type ActiveOption struct {
+	DailyPrice int `json:"day_price"`
+	WeekPrice  int `json:"week_price"`
+	MonthPrice int `json:"month_price"`
+}
+
 type Rental struct {
 	ID            uint   `json:"id"`
 	Name          string `json:"filtered_name"`
@@ -40,14 +49,17 @@ type Rental struct {
 	// Where's the car parked
 	Location Location `json:"location"`
 
-	VehicleMake          string        `string:"vehicle_make"`
-	VehicleYear          uint          `json:"vehicle_year"`
-	MinDays              uint          `json:"minimum_days"`
-	DailyPriceCents      uint          `json:"price_per_day"`
-	WeeklyPriceCents     uint          `json:"price_per_week"`
-	MonthlyPriceCents    uint          `json:"price_per_month"`
+	VehicleMake string `string:"vehicle_make"`
+	VehicleYear uint   `json:"vehicle_year"`
+	MinDays     uint   `json:"minimum_days"`
+	// Don't use, use ActiveOption instead
+	DeprecatedDailyPriceCents   int `json:"price_per_day"`
+	DeprecatedWeeklyPriceCents  int `json:"price_per_week"`
+	DeprecatedMonthlyPriceCents int `json:"price_per_month"`
+
 	SecurityDepositCents uint          `json:"security_deposit"`
 	MileageOption        MileageOption `json:"mileage_usage_item"`
+	ActiveOption         ActiveOption  `json:"active_option"`
 }
 
 func List(start, end time.Time) (*ListResponse, error) {
@@ -90,6 +102,20 @@ func GetBookings(rentalID uint, start, end time.Time) ([]Booking, error) {
 
 	err = json.Unmarshal(respBytes, &bookings)
 	return bookings, err
+}
+
+func (b *Booking) NumberOfNights() int {
+	return int(b.To.Time().Sub(b.From.Time()).Hours() / 24)
+}
+
+func (b *Booking) ApproximateRevenue(dailyCents, weeklyTotalCents, monthlyTotalCents int) int {
+	// Using number of nights, let's now apply the monthly and weekly discount.
+	nights := b.NumberOfNights()
+	var numOfMonths, numOfWeeks, numOfDaysRemain int
+	numOfMonths = nights / 30
+	numOfWeeks = (nights - (numOfMonths * 30)) / 7
+	numOfDaysRemain = nights - (numOfMonths * 30) - (numOfWeeks * 7)
+	return numOfDaysRemain*dailyCents + numOfMonths*monthlyTotalCents + numOfWeeks*weeklyTotalCents
 }
 
 func (r *Rental) URL() string {
