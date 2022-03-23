@@ -13,7 +13,5 @@ func EncodeURL(rawURL string) (string, error) {
 	retURL := fmt.Sprintf("%s://%s%s", parsedURL.Scheme, parsedURL.Host, parsedURL.Path)
 
 	vals := parsedURL.Query().Encode()
-
-	fmt.Println("vals", vals)
 	return fmt.Sprintf("%s?%s", retURL, vals), nil
 }

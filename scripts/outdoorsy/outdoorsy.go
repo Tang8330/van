@@ -41,19 +41,34 @@ func main() {
 
 	csvWriter.Write([]string{
 		"id", "daily_rate_cents", "weekly_rate_cents", "monthly_rate_cents", "min_days",
+		"security_deposit_cents", "num_miles_free_daily", "per_mile_cents", "location",
+		"this_year_bookings", "last_year_bookings", "url",
 	})
 
 	for _, rental := range list.Rentals {
-		bookings, err := lib.GetBookings(rental.ID, now, lib.EndOfYear(now))
+		thisYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(now), lib.EndOfYear(now))
+		lastYear := now.Add(-1 * 365 * 24 * time.Hour)
+		lastYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(lastYear), lib.EndOfYear(lastYear))
 		checkError(err, "failed to get bookings")
+
+		mileageOverageCents := "N/A"
+		if len(rental.MileageOption.Tiers) > 0 {
+			mileageOverageCents = fmt.Sprint(rental.MileageOption.Tiers[0].PriceCents)
+		}
+
 		csvWriter.Write([]string{
 			fmt.Sprint(rental.ID),
 			fmt.Sprint(rental.DailyPriceCents),
 			fmt.Sprint(rental.WeeklyPriceCents),
 			fmt.Sprint(rental.MonthlyPriceCents),
 			fmt.Sprint(rental.MinDays),
+			fmt.Sprint(rental.SecurityDepositCents),
+			fmt.Sprint(rental.MileageOption.Free),
+			mileageOverageCents,
+			rental.Location.City,
+			fmt.Sprint(len(thisYearBookings)),
+			fmt.Sprint(len(lastYearBookings)),
+			rental.URL(),
 		})
-
-		fmt.Println("Bookings", len(bookings))
 	}
 }

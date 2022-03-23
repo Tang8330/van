@@ -16,6 +16,10 @@ func EndOfYear(t1 time.Time) time.Time {
 	return time.Date(t1.Year(), 12, 31, 0, 0, 0, 0, t1.Location())
 }
 
+func StartOfYear(t1 time.Time) time.Time {
+	return time.Date(t1.Year(), 1, 1, 0, 0, 0, 0, t1.Location())
+}
+
 type TimeFormatYYYYMMDD time.Time
 
 func (t *TimeFormatYYYYMMDD) UnmarshalJSON(b []byte) (err error) {

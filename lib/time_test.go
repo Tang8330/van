@@ -20,3 +20,10 @@ func TestEndOfYear(t *testing.T) {
 		t.Fatal("Failed to get end of year", retVal)
 	}
 }
+
+func TestStartOfYear(t *testing.T) {
+	expectedVal := "2022-01-01"
+	if retVal := ToYYYMMDD(StartOfYear(randomDate)); retVal != expectedVal {
+		t.Fatal("Failed to get end of year", retVal)
+	}
+}

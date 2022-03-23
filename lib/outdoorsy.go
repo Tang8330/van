@@ -13,7 +13,8 @@ type ListResponse struct {
 }
 
 type Location struct {
-	City string `json:"city"`
+	City  string `json:"city"`
+	State string `json:"state"`
 }
 
 type Tier struct {
@@ -32,20 +33,21 @@ type Booking struct {
 
 type Rental struct {
 	ID            uint   `json:"id"`
-	Name          string `json:"name"`
+	Name          string `json:"filtered_name"`
 	Description   string `json:"filtered_description"`
 	FavoriteCount uint   `json:"favorite_count"`
 
 	// Where's the car parked
 	Location Location `json:"location"`
 
-	VehicleMake       string        `string:"vehicle_make"`
-	VehicleYear       uint          `json:"vehicle_year"`
-	MinDays           uint          `json:"minimum_days"`
-	DailyPriceCents   uint          `json:"price_per_day"`
-	WeeklyPriceCents  uint          `json:"price_per_week"`
-	MonthlyPriceCents uint          `json:"price_per_month"`
-	MileageOption     MileageOption `json:"mileage_usage_item"`
+	VehicleMake          string        `string:"vehicle_make"`
+	VehicleYear          uint          `json:"vehicle_year"`
+	MinDays              uint          `json:"minimum_days"`
+	DailyPriceCents      uint          `json:"price_per_day"`
+	WeeklyPriceCents     uint          `json:"price_per_week"`
+	MonthlyPriceCents    uint          `json:"price_per_month"`
+	SecurityDepositCents uint          `json:"security_deposit"`
+	MileageOption        MileageOption `json:"mileage_usage_item"`
 }
 
 func List(start, end time.Time) (*ListResponse, error) {
@@ -88,4 +90,9 @@ func GetBookings(rentalID uint, start, end time.Time) ([]Booking, error) {
 
 	err = json.Unmarshal(respBytes, &bookings)
 	return bookings, err
+}
+
+func (r *Rental) URL() string {
+	// https://www.outdoorsy.com/rv-rental/mill-valley_ca/2021_mercedes-benz_sprinter_253662-listing?
+	return fmt.Sprintf("https://www.outdoorsy.com/rv-rental/%s_%s/%s_%d-listing?", SpaceToDash(r.Location.City), SpaceToDash(r.Location.State), SpaceToDash(r.Name), r.ID)
 }
