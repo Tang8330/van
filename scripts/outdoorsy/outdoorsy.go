@@ -20,7 +20,7 @@ func main() {
 	now := time.Now()
 	folderName := lib.ToYYYMMDD(now)
 
-	list, err := lib.List(now, now.Add(7*24*time.Hour))
+	list, err := lib.List()
 	checkError(err, "failed to list")
 
 	err = os.Mkdir(folderName, 0755)

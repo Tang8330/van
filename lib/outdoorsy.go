@@ -63,9 +63,9 @@ type Rental struct {
 	ActiveOption         ActiveOption  `json:"active_options"`
 }
 
-func List(start, end time.Time) (*ListResponse, error) {
+func List() (*ListResponse, error) {
 	// I only care about Sprinter Vans.
-	urlString := fmt.Sprintf("https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San Francisco, California, United States&bounds[ne]=37.933896600579175,-121.92748823529058&bounds[sw]=37.77581594083472,-122.55651176470212&currency=USD&date[from]=%s&date[to]=%s&filter[exclude_type]=utility-trailer,tow-vehicle,other&filter[keywords]=sprinter&filter[type]=camper-van&locale=en-us&page[limit]=500&page[offset]=0&suggested=true", ToYYYMMDD(start), ToYYYMMDD(end))
+	urlString := "https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San Francisco, California, United States&bounds[ne]=37.933896600579175,-121.92748823529058&bounds[sw]=37.77581594083472,-122.55651176470212&currency=USD&filter[exclude_type]=utility-trailer,tow-vehicle,other&filter[keywords]=sprinter&filter[type]=camper-van&locale=en-us&page[limit]=500&page[offset]=0&suggested=true"
 	urlEncodedString, err := EncodeURL(urlString)
 	if err != nil {
 		return nil, err
