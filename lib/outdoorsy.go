@@ -61,11 +61,12 @@ type Rental struct {
 	SecurityDepositCents uint          `json:"security_deposit"`
 	MileageOption        MileageOption `json:"mileage_usage_item"`
 	ActiveOption         ActiveOption  `json:"active_options"`
+	Slug                 string        `json:"slug"`
 }
 
 func List() (*ListResponse, error) {
-	// I only care about Sprinter Vans.
-	urlString := "https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San Francisco, California, United States&bounds[ne]=37.933896600579175,-121.92748823529058&bounds[sw]=37.77581594083472,-122.55651176470212&currency=USD&filter[exclude_type]=utility-trailer,tow-vehicle,other&filter[keywords]=sprinter&filter[type]=camper-van&locale=en-us&page[limit]=500&page[offset]=0&suggested=true"
+	// I only care about camper vans (class B)
+	urlString := "https://search.outdoorsy.com/rentals?raw_json=true&seo_links=true&education=true&average_daily_pricing=true&address=San Francisco, California, United States&currency=USD&filter[exclude_type]=utility-trailer,tow-vehicle,other&filter[type]=b&locale=en-us&page[limit]=500&page[offset]=0&suggested=true"
 	urlEncodedString, err := EncodeURL(urlString)
 	if err != nil {
 		return nil, err
@@ -121,5 +122,5 @@ func (b *Booking) ApproximateRevenue(dailyCents, weeklyTotalCents, monthlyTotalC
 
 func (r *Rental) URL() string {
 	// https://www.outdoorsy.com/rv-rental/mill-valley_ca/2021_mercedes-benz_sprinter_253662-listing?
-	return fmt.Sprintf("https://www.outdoorsy.com/rv-rental/%s_%s/%s_%d-listing?", SpaceToDash(r.Location.City), SpaceToDash(r.Location.State), SpaceToDash(r.Name), r.ID)
+	return fmt.Sprintf("https://www.outdoorsy.com%s", r.Slug)
 }

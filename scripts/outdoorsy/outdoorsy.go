@@ -52,7 +52,7 @@ func main() {
 	for _, rental := range list.Rentals {
 		var lastYearRevenue, currentYearRevenue, bookingDurationDays int
 		thisYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(now), lib.EndOfYear(now))
-		checkError(err, "failed to get this year bookings")
+		checkError(err, fmt.Sprintf("failed to get this year bookings, rental_id: %v", rental.ID))
 		lastYear := now.Add(-1 * 365 * 24 * time.Hour)
 		lastYearBookings, err := lib.GetBookings(rental.ID, lib.StartOfYear(lastYear), lib.EndOfYear(lastYear))
 		checkError(err, "failed to get last year bookings")

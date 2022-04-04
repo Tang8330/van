@@ -1,15 +1,15 @@
 ###### This is the 2022-04-03 run ###### 
-There are 14 number of camper vans available for rental 
+There are 150 number of camper vans available for rental 
 This is the raw rental numbers for this region for this year and last year: 
-2022 - January, value: 5, 2021 - January, value: 4 
-2022 - February, value: 6, 2021 - February, value: 1 
-2022 - March, value: 4, 2021 - March, value: 0 
-2022 - April, value: 9, 2021 - April, value: 0 
-2022 - May, value: 3, 2021 - May, value: 1 
-2022 - June, value: 6, 2021 - June, value: 5 
-2022 - July, value: 1, 2021 - July, value: 6 
-2022 - August, value: 4, 2021 - August, value: 6 
-2022 - September, value: 5, 2021 - September, value: 2 
-2022 - October, value: 0, 2021 - October, value: 4 
-2022 - November, value: 0, 2021 - November, value: 1 
-2022 - December, value: 0, 2021 - December, value: 1 
+2022 - January, value: 66, 2021 - January, value: 33 
+2022 - February, value: 48, 2021 - February, value: 28 
+2022 - March, value: 92, 2021 - March, value: 37 
+2022 - April, value: 129, 2021 - April, value: 29 
+2022 - May, value: 100, 2021 - May, value: 39 
+2022 - June, value: 91, 2021 - June, value: 58 
+2022 - July, value: 54, 2021 - July, value: 61 
+2022 - August, value: 42, 2021 - August, value: 47 
+2022 - September, value: 23, 2021 - September, value: 49 
+2022 - October, value: 6, 2021 - October, value: 49 
+2022 - November, value: 3, 2021 - November, value: 42 
+2022 - December, value: 2, 2021 - December, value: 33 
